@@ -3,6 +3,8 @@ package com.company;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,48 +12,41 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    public static final String BASE = "https://stocktwits.com/symbol/";
-    public static void main(String[] args) throws InterruptedException {
+    public static final int threads = 10;
+    public static void main(String[] args) throws InterruptedException, IOException {
         long startTime = System.currentTimeMillis();
 
         List<String> tickers = getTickers();
-
-        Scraper _1 = new Scraper(tickers.subList(0,250));
-        Scraper _2 = new Scraper(tickers.subList(250,500));
-        Scraper _3 = new Scraper(tickers.subList(500, 750));
-        Scraper _4 = new Scraper(tickers.subList(750, tickers.size()));
-
-        Thread thread1 = new Thread(_1);
-        Thread thread2 = new Thread(_2);
-        Thread thread3 = new Thread(_3);
-        Thread thread4 = new Thread(_4);
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
-
-        thread1.join();
-        thread2.join();
-        thread3.join();
-        thread4.join();
-
+        List<List<String>> chops = chopUpList(tickers);
+        List<Scraper> scrapers = new ArrayList<>();
+        for(List<String> l : chops) {
+            scrapers.add(new Scraper(l));
+        }
+        List<Thread> threads = new ArrayList<>();
+        for(Scraper s : scrapers) {
+            threads.add(new Thread(s));
+        }
+        for(Thread t : threads) {
+            t.start();
+        }
+        for(Thread t : threads) {
+            t.join();
+        }
         List<Entry> entries = new ArrayList<>();
-
-
-        entries.addAll(_1.threadOnly);
-        entries.addAll(_2.threadOnly);
-        entries.addAll(_3.threadOnly);
-        entries.addAll(_4.threadOnly);
+        for(Scraper s : scrapers) {
+            entries.addAll(s.threadOnly);
+        }
 
         writeTickers(entries);
+        appendGoodFile(entries);
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
 
-    public static List<String> getTickers() {
+    private static List<String> getTickers() {
         try {
-            String tickers = Files.readString(Path.of("C:\\Users\\balazs\\Downloads\\1000.txt"));
-             String[] tickers2 = tickers.split("\r\n");
+            //String tickers = Files.readString(Path.of("C:\\Users\\balazs\\Downloads\\1000.txt"));
+            String tickers = Files.readString(Path.of("/Users/raczbalazs/Downloads/tickers.txt"));
+            String[] tickers2 = tickers.split("\r\n");
             return Arrays.stream(tickers2).collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,13 +54,49 @@ public class Main {
         }
     }
 
-    public static void writeTickers(List<Entry> entries) {
-        String s = entries.stream().map(x -> x.toString()).collect(Collectors.joining("\r\n"));
+    private static void writeTickers(List<Entry> entries) {
+        String s = entries.stream().map(Entry::toString).collect(Collectors.joining("\r\n"));
         try {
-            Files.writeString((Path.of("C:\\Users\\balazs\\Downloads\\1002.txt")), s);
+            //Files.writeString((Path.of("C:\\Users\\balazs\\Downloads\\1002.txt")), s);
+            Files.writeString((Path.of("/Users/raczbalazs/Downloads/1002.txt")), s);
         }  catch (IOException e) {
             System.err.println(e);
         }
     }
 
+    private static List<List<String>> chopUpList(List<String> entries) {
+        int size = entries.size();
+        List<List<String>> partitions = new ArrayList<>();
+
+        for (int i = 0; i < threads; i++) {
+            int start = i * (size / threads);
+            int end = (i + 1) * (size / threads);
+            if(i + 1 == threads) {
+                partitions.add(entries.subList(start, entries.size()));
+            } else {
+                partitions.add(entries.subList(start, end));
+            }
+        }
+
+        return partitions;
+    }
+
+    private static void appendGoodFile(List<Entry> entries) throws IOException{
+        Path database = Path.of("/Users/raczbalazs/Downloads/database.txt");
+
+        List<String> lines = Files.readAllLines(database);
+        if(lines.size() != entries.size()) {
+            System.err.println("Big OOPSIE, The size of the entries intended to be written out did not match, that of the output files!");
+            System.err.println("The entries contained " + entries.size() + " entries, and there were " + lines.size() + " lines in the output file");
+            throw new IOException("Program shut down in order to avoid any more unnecesary damage!");
+        } else {
+            for(int i = 0; i < lines.size(); i++) {
+                String newPart = entries.get(i).toCSV();
+                lines.set(i, lines.get(i) + newPart);
+            }
+            String done = lines.stream().collect(Collectors.joining("\r\n"));
+            Files.writeString(database, done);
+            System.out.println("DONE");
+        }
+    }
 }

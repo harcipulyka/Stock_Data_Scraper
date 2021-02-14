@@ -43,6 +43,18 @@ public class Entry {
         return s.toString();
     }
 
+    public String toCSV() {
+        StringBuilder s = new StringBuilder();
+        s.append("," + follower.getString());
+        s.append("," + sentiment.getString());
+        s.append("," + message.getString());
+        s.append("," + low52.getString());
+        s.append("," + high52.getString());
+        s.append("," + marketCap);
+        s.append("," + volume);
+        return s.toString();
+    }
+
     private Pair parseFollower(String follower) {
         String s = follower.replaceAll(",", "");
         Integer i = Integer.parseInt(s);
