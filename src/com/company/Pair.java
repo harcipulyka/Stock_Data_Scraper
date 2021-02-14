@@ -3,17 +3,15 @@ package com.company;
 public class Pair {
     public static final Pair WRONG_PAIR = new Pair("NaN", Integer.MIN_VALUE);
 
-    private String s;
-    private Integer i;
-    private Double d;
+    private final String s;
+    private final Integer i;
+    private final Double d;
     private boolean gultig;
-    private boolean isDouble;
 
     public Pair(String s, Integer i) {
         this.s = s;
         this.i = i;
         this.d = Double.MIN_VALUE;
-        this.isDouble = false;
         gultig = !s.equals("NaN");
     }
 
@@ -21,7 +19,6 @@ public class Pair {
         this.s = s;
         this.d = d;
         this.i = Integer.MIN_VALUE;
-        this.isDouble = true;
     }
 
     public String getString() {

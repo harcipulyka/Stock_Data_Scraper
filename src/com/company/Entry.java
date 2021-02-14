@@ -34,12 +34,12 @@ public class Entry {
 
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("\nFollowers: " + follower.getString());
-        s.append("\nSentiment: " + sentiment.getString());
-        s.append("\nMessage: " + message.getString());
-        s.append("\nMarket Cap: " + marketCap);
-        s.append("\nVolume: " + volume);
-        s.append("\nYearly low -> high: " + low52 .getString()+ " -> " + high52.getString());
+        s.append("\nFollowers: " + follower.getString())
+        .append("\nSentiment: " + sentiment.getString())
+        .append("\nMessage: " + message.getString())
+        .append("\nMarket Cap: " + marketCap)
+        .append("\nVolume: " + volume)
+        .append("\nYearly low -> high: " + low52 .getString()+ " -> " + high52.getString());
         return s.toString();
     }
 

@@ -47,7 +47,7 @@ public class Scraper implements Runnable {
             entries.add(newEntry);
         }
 
-        wrongOnes.stream().forEach(System.err::println);
+        wrongOnes.forEach(System.err::println);
         return entries;
     }
 
@@ -89,11 +89,12 @@ public class Scraper implements Runnable {
         }
 
         //exchange market
+        /*
         HtmlDivision exchange = p.getFirstByXPath("//div[@class='st_3BauJpd st_3OfMfdC st_3TuKxmZ']");
         HtmlSpan companyName = exchange.getFirstByXPath("span");
         String tmp = exchange.asText().replace(companyName.asText(), "");
         String[] tmp2 = tmp.split(" ");
-
+        */
 
         Entry newEntry = new Entry(followers, sentiment, message, keyData);
         System.out.println(newEntry.toString());
