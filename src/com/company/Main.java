@@ -14,7 +14,7 @@ public class Main {
         List<String> tickers = getTickers();
         tickers.stream().forEach(x -> System.out.println(BASE + x));
         Scraper scraper = new Scraper(tickers);
-        List<Entry> entries = scraper.getPages();
+        List<Entry> entries = scraper.parsePages();
 
         System.out.println("");
         System.out.println("");
