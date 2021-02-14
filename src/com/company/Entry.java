@@ -50,6 +50,11 @@ public class Entry {
     }
 
     private Pair parseDouble(String trend) {
+        if(trend.contains("k")){
+            trend = trend.replace(".", "");
+            trend = trend.replace("k", "");
+            trend += "0";
+        }
         Double d = Double.parseDouble(trend);
         return new Pair(trend, d);
     }

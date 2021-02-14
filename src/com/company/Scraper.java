@@ -8,13 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Scraper {
+public class Scraper implements Runnable {
 
     final static Entry WRONG_ENTRY = new Entry("NaN","NaN", "NaN", null);
     final static String BASE = "https://stocktwits.com/symbol/";
 
     final WebClient client;
     final List<String> links;
+    List<Entry> threadOnly = new ArrayList<>();
 
 
     public Scraper(List<String> links) {
@@ -52,10 +53,7 @@ public class Scraper {
 
     private Entry getData(HtmlPage p) {
         //this helps cleaning up the parse method
-        if(p == null){
-            System.err.println("Unrecovarable error with the URL: " + p.getUrl());
-            return WRONG_ENTRY;
-        }
+        if(p == null) return WRONG_ENTRY;
 
         //followers
         HtmlStrong f = p.getFirstByXPath(".//strong");
@@ -82,22 +80,28 @@ public class Scraper {
         List<HtmlListItem> fundamentals = p.getByXPath("//li");
         Map<String, String> keyData = new HashMap<>();
         for(HtmlListItem l : fundamentals) {
-            List<HtmlSpan> s = l.getByXPath("span");
-            if(s.size() == 2) {
-                String attributeName = s.get(0).asText();
-                String value = s.get(1).asText();
+            List<HtmlSpan> span = l.getByXPath("span");
+            if(span.size() == 2) {
+                String attributeName = span.get(0).asText();
+                String value = span.get(1).asText();
                 keyData.put(attributeName, value);
             }
         }
 
         //exchange market
-        HtmlDivision div = p.getFirstByXPath("//div[@class='st_3BauJpd']");
-        System.out.println(div.asText());
+        HtmlDivision exchange = p.getFirstByXPath("//div[@class='st_3BauJpd st_3OfMfdC st_3TuKxmZ']");
+        HtmlSpan companyName = exchange.getFirstByXPath("span");
+        String tmp = exchange.asText().replace(companyName.asText(), "");
+        String[] tmp2 = tmp.split(" ");
 
 
         Entry newEntry = new Entry(followers, sentiment, message, keyData);
         System.out.println(newEntry.toString());
         return newEntry;
+    }
+
+    public void run() {
+        threadOnly = parsePages();
     }
 
 }
