@@ -1,5 +1,6 @@
 package com.company;
 
+import java.text.NumberFormat;
 import java.util.Map;
 
 public class Entry {
@@ -56,18 +57,26 @@ public class Entry {
     }
 
     private Pair parseFollower(String follower) {
-        String s = follower.replaceAll(",", "");
-        Integer i = Integer.parseInt(s);
-        return new Pair(s, i);
+        try {
+            String s = follower.replaceAll(",", "");
+            Integer i = Integer.parseInt(s);
+            return new Pair(s, i);
+        } catch (NumberFormatException e ){
+            return Pair.WRONG_PAIR;
+        }
     }
 
     private Pair parseDouble(String trend) {
-        if(trend.contains("k")){
-            trend = trend.replace(".", "");
-            trend = trend.replace("k", "");
-            trend += "0";
+        try {
+            if(trend.contains("k")){
+                trend = trend.replace(".", "");
+                trend = trend.replace("k", "");
+                trend += "0";
+            }
+            Double d = Double.parseDouble(trend);
+            return new Pair(trend, d);
+        } catch (NumberFormatException e) {
+            return Pair.WRONG_PAIR;
         }
-        Double d = Double.parseDouble(trend);
-        return new Pair(trend, d);
     }
 }

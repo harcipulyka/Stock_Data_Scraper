@@ -6,12 +6,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Main {
 
     public static final int threads = 10;
     public static void main(String[] args) throws InterruptedException, IOException {
+
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.SEVERE);
+
         long startTime = System.currentTimeMillis();
 
         List<String> tickers = getTickers();
@@ -36,14 +40,14 @@ public class Main {
         }
 
         writeTickers(entries);
-        appendGoodFile(entries);
+        //appendGoodFile(entries);
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
 
     private static List<String> getTickers() {
         try {
-            //String tickers = Files.readString(Path.of("C:\\Users\\balazs\\Downloads\\1000.txt"));
-            String tickers = Files.readString(Path.of("/Users/raczbalazs/Downloads/tickers.txt"));
+            String tickers = Files.readString(Path.of("C:\\Users\\balazs\\Downloads\\6000.txt"));
+            //String tickers = Files.readString(Path.of("/Users/raczbalazs/Downloads/6000.txt"));
             String[] tickers2 = tickers.split("\r\n");
             return Arrays.stream(tickers2).collect(Collectors.toList());
         } catch (IOException e) {
@@ -55,8 +59,8 @@ public class Main {
     private static void writeTickers(List<Entry> entries) {
         String s = entries.stream().map(Entry::toString).collect(Collectors.joining("\r\n"));
         try {
-            //Files.writeString((Path.of("C:\\Users\\balazs\\Downloads\\1002.txt")), s);
-            Files.writeString((Path.of("/Users/raczbalazs/Downloads/1002.txt")), s);
+            Files.writeString((Path.of("C:\\Users\\balazs\\Downloads\\6000result.txt")), s);
+            //Files.writeString((Path.of("/Users/raczbalazs/Downloads/6000result.txt")), s);
         }  catch (IOException e) {
             System.err.println("Problem writing the data" + e);
         }

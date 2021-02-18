@@ -22,6 +22,7 @@ public class Scraper implements Runnable {
         client = new WebClient();
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(false);
+        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
         this.links = links;
     }
 
@@ -38,16 +39,18 @@ public class Scraper implements Runnable {
 
     public List<Entry> parsePages() {
         List<Entry> entries = new ArrayList<>();
-        List<String> wrongOnes = new ArrayList<>(); //TODO only for debugging
 
         for (String s : links) {
             HtmlPage p = getPage(s);
-            Entry newEntry = getData(p);
-            if(newEntry == WRONG_ENTRY) wrongOnes.add(s); //TODO also only for debugging
-            entries.add(newEntry);
+            if(p.getWebResponse().getStatusCode() == 404) {
+                entries.add(WRONG_ENTRY);
+            } else {
+                Entry newEntry = getData(p);
+                if(newEntry != WRONG_ENTRY) System.err.println(s);
+                entries.add(newEntry);
+            }
         }
 
-        wrongOnes.forEach(System.err::println);
         return entries;
     }
 
@@ -57,6 +60,7 @@ public class Scraper implements Runnable {
 
         //followers
         HtmlStrong f = p.getFirstByXPath(".//strong");
+        if (f == null ) return WRONG_ENTRY;
         String followers = f.asText();
 
         //sentiment
@@ -97,7 +101,7 @@ public class Scraper implements Runnable {
         */
 
         Entry newEntry = new Entry(followers, sentiment, message, keyData);
-        System.out.println(newEntry.toString());
+        //System.out.println(newEntry.toString());
         return newEntry;
     }
 
