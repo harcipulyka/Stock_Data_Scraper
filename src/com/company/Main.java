@@ -6,48 +6,40 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Main {
 
-    public static final int threads = 10;
-    public static void main(String[] args) throws InterruptedException, IOException {
+    //region constants
+    public static final int THREADCOUNT = 10;
 
+    public static final String PCTICKERS = "C:\\Users\\balazs\\Downloads\\1000.txt";
+    public static final String MACTICKERS = "/Users/raczbalazs/Downloads/tickers.txt";
+    public final static String PITICKERS = "";
+
+    public final static String PCDEBUG = "C:\\Users\\balazs\\Downloads\\1002.txt";
+    public final static String MACDEBUG = "/Users/raczbalazs/Downloads/1002.txt";
+    public final static String PIDEBUG = "";
+
+    public final static String MACDATABASE = "/Users/raczbalazs/Downloads/database.txt";
+    //endregion
+
+    public static void main(String[] args) throws InterruptedException, IOException {
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.SEVERE);
 
         long startTime = System.currentTimeMillis();
 
-        List<String> tickers = getTickers();
-        List<List<String>> chops = chopUpList(tickers);
-        List<Scraper> scrapers = new ArrayList<>();
-        for(List<String> l : chops) {
-            scrapers.add(new Scraper(l));
-        }
-        List<Thread> threads = new ArrayList<>();
-        for(Scraper s : scrapers) {
-            threads.add(new Thread(s));
-        }
-        for(Thread t : threads) {
-            t.start();
-        }
-        for(Thread t : threads) {
-            t.join();
-        }
-        List<Entry> entries = new ArrayList<>();
-        for(Scraper s : scrapers) {
-            entries.addAll(s.threadOnly);
-        }
+        if(args.length == 0) throw new IllegalArgumentException("Wrong syntax, specify sub program (pi, )");
 
-        writeTickers(entries);
-        //appendGoodFile(entries);
+        if (args[0].equals("pi")) pi();
+
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
 
+    //gets the tickers and returns them in a list of strings
     private static List<String> getTickers() {
         try {
-            String tickers = Files.readString(Path.of("C:\\Users\\balazs\\Downloads\\6000.txt"));
-            //String tickers = Files.readString(Path.of("/Users/raczbalazs/Downloads/6000.txt"));
+            String tickers = Files.readString(Path.of(MACTICKERS));
             String[] tickers2 = tickers.split("\r\n");
             return Arrays.stream(tickers2).collect(Collectors.toList());
         } catch (IOException e) {
@@ -56,24 +48,25 @@ public class Main {
         }
     }
 
+    //outputs the tostring version of each entry to the file
     private static void writeTickers(List<Entry> entries) {
         String s = entries.stream().map(Entry::toString).collect(Collectors.joining("\r\n"));
         try {
-            Files.writeString((Path.of("C:\\Users\\balazs\\Downloads\\6000result.txt")), s);
-            //Files.writeString((Path.of("/Users/raczbalazs/Downloads/6000result.txt")), s);
+            Files.writeString((Path.of(MACDEBUG)), s);
         }  catch (IOException e) {
             System.err.println("Problem writing the data" + e);
         }
     }
 
+    //helper functions, chops up a list to threadcount number of lists
     private static List<List<String>> chopUpList(List<String> entries) {
         int size = entries.size();
         List<List<String>> partitions = new ArrayList<>();
 
-        for (int i = 0; i < threads; i++) {
-            int start = i * (size / threads);
-            int end = (i + 1) * (size / threads);
-            if(i + 1 == threads) {
+        for (int i = 0; i < THREADCOUNT; i++) {
+            int start = i * (size / THREADCOUNT);
+            int end = (i + 1) * (size / THREADCOUNT);
+            if(i + 1 == THREADCOUNT) {
                 partitions.add(entries.subList(start, entries.size()));
             } else {
                 partitions.add(entries.subList(start, end));
@@ -83,8 +76,9 @@ public class Main {
         return partitions;
     }
 
+    //writes out the data to an existing csv file, if the line count is the same entry list size
     private static void appendGoodFile(List<Entry> entries) throws IOException{
-        Path database = Path.of("/Users/raczbalazs/Downloads/database.txt");
+        Path database = Path.of(MACDATABASE);
 
         List<String> lines = Files.readAllLines(database);
         if(lines.size() != entries.size()) {
@@ -99,6 +93,58 @@ public class Main {
             String done = String.join("\r\n", lines);
             Files.writeString(database, done);
             System.out.println("DONE");
+        }
+    }
+
+    //this method is maintained and used by the raspberry pi
+    private static void pi() throws InterruptedException, IOException{
+        List<String> tickers = getTickers();
+        List<List<String>> chops = chopUpList(tickers);
+        List<StocktwitsScraper> scrapers = new ArrayList<>();
+        List<Thread> threads = new ArrayList<>();
+        List<Entry> entries = new ArrayList<>();
+
+        for(List<String> l : chops) {
+            StocktwitsScraper s = new StocktwitsScraper(l);
+            scrapers.add(s);
+            Thread t = new Thread(s);
+            threads.add(t);
+            t.start();
+        }
+
+        for(Thread t : threads) {
+            t.join();
+        }
+
+        for(StocktwitsScraper s : scrapers) {
+            entries.addAll(s.result);
+        }
+
+        writeTickers(entries);
+        appendGoodFile(entries);
+    }
+
+    private static void scrapeFinwizFull() throws InterruptedException, IOException{
+        List<String> tickerSymbols = getTickers();
+        List<List<String>> chops = chopUpList(tickerSymbols);
+        List<Finwiz> scrapers = new ArrayList<>();
+        List<Thread> threads = new ArrayList<>();
+        List<Ticker> tickers = new ArrayList<>();
+
+        for(List<String> l : chops) {
+            Finwiz s = new Finwiz(Finwiz.FINWIZ.OVERVIEW, l);
+            scrapers.add(s);
+            Thread t = new Thread(s);
+            threads.add(t);
+            t.start();
+        }
+
+        for(Thread t : threads) {
+            t.join();
+        }
+
+        for(Finwiz s : scrapers) {
+            tickers.addAll(s.tickers);
         }
     }
 }

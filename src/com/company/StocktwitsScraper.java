@@ -8,17 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Scraper implements Runnable {
+public class StocktwitsScraper implements Runnable {
 
     final static Entry WRONG_ENTRY = new Entry("NaN","NaN", "NaN", null);
     final static String BASE = "https://stocktwits.com/symbol/";
 
     final WebClient client;
     final List<String> links;
-    List<Entry> threadOnly = new ArrayList<>();
+    List<Entry> result = new ArrayList<>();
 
-
-    public Scraper(List<String> links) {
+    public StocktwitsScraper(List<String> links) {
         client = new WebClient();
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(false);
@@ -42,7 +41,7 @@ public class Scraper implements Runnable {
 
         for (String s : links) {
             HtmlPage p = getPage(s);
-            if(p.getWebResponse().getStatusCode() == 404) {
+            if(p.getWebResponse().getStatusCode() == 404 || p == null) {
                 entries.add(WRONG_ENTRY);
             } else {
                 Entry newEntry = getData(p);
@@ -55,12 +54,9 @@ public class Scraper implements Runnable {
     }
 
     private Entry getData(HtmlPage p) {
-        //this helps cleaning up the parse method
-        if(p == null) return WRONG_ENTRY;
-
         //followers
         HtmlStrong f = p.getFirstByXPath(".//strong");
-        if (f == null ) return WRONG_ENTRY;
+        if (f == null ) return WRONG_ENTRY; //this is needed against the dynamically loaded small pages, where the page can be loaded, and still not contain bold
         String followers = f.asText();
 
         //sentiment
@@ -101,12 +97,11 @@ public class Scraper implements Runnable {
         */
 
         Entry newEntry = new Entry(followers, sentiment, message, keyData);
-        //System.out.println(newEntry.toString());
         return newEntry;
     }
 
     public void run() {
-        threadOnly = parsePages();
+        result = parsePages();
     }
 
 }
