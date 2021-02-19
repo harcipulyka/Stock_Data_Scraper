@@ -33,6 +33,16 @@ public class Entry {
         }
     }
 
+    public Entry(String follower,String sentiment, String message, String low52, String high52, String marketCap, String volume){
+        this.follower = parseFollower(follower);
+        this.sentiment = parseDouble(sentiment);
+        this.message = parseDouble(message);
+        this.low52 = parseDouble(low52);
+        this.high52 = parseDouble(high52);
+        this.marketCap = marketCap;
+        this.volume = volume;
+    }
+
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("\nFollowers: " + follower.getString())

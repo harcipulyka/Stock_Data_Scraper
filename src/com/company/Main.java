@@ -3,9 +3,7 @@ package com.company;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -29,10 +27,12 @@ public class Main {
 
         long startTime = System.currentTimeMillis();
 
-        if(args.length == 0) throw new IllegalArgumentException("Wrong syntax, specify sub program (pi, )");
+        //if(args.length == 0) throw new IllegalArgumentException("Wrong syntax, specify sub program (pi, finwiz, analyst)");
 
-        if (args[0].equals("pi")) pi();
-
+//        if (args[0].equals("pi")) pi();
+//        if (args[0].equals("finwiz")) finwiz();
+//        if (args[0].equals("analyst")) ;
+        analyst();
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
 
@@ -124,7 +124,8 @@ public class Main {
         appendGoodFile(entries);
     }
 
-    private static void scrapeFinwizFull() throws InterruptedException, IOException{
+    //reads in the tickers, and scrapes finwiz for those tickers, no output atm
+    private static void finwiz() throws InterruptedException, IOException{
         List<String> tickerSymbols = getTickers();
         List<List<String>> chops = chopUpList(tickerSymbols);
         List<Finwiz> scrapers = new ArrayList<>();
@@ -146,5 +147,60 @@ public class Main {
         for(Finwiz s : scrapers) {
             tickers.addAll(s.tickers);
         }
+    }
+
+    private static void analyst() throws IOException{
+        LinkedHashMap<String, List<Entry>> datamap = getData();
+        List<String> tickers = datamap.keySet().stream().collect(Collectors.toList());
+        List<List<Entry>> entries = datamap.values().stream().collect(Collectors.toList());
+        HashMap<Double, String> best = new HashMap<>();
+        for (int x = 0; x < datamap.size(); x++) {
+            double percentageGrow = 0.0;
+            List<Entry> l = entries.get(x);
+            for(int i = 1; i < l.size(); i++) {
+                int today = l.get(i - 1).follower.getInteger();
+                int yesterday = l.get(i).follower.getInteger();
+                if(today == Integer.MIN_VALUE || yesterday == Integer.MIN_VALUE) {
+                    continue;
+                }
+                int difference = today - yesterday;
+                double percentageChange =  100 * ((double) difference / (double) yesterday);
+                percentageGrow += percentageChange;
+            }
+            best.put(percentageGrow, tickers.get(x));
+        }
+
+        best
+                .entrySet()
+                .stream()
+                .sorted(Comparator.comparing(x -> x.getKey()))
+                .forEach(x -> System.out.println(x.getValue() + " : " + x.getKey()));
+    }
+
+    private static LinkedHashMap<String, List<Entry>> getData() throws IOException {
+        List<String[]> data = new ArrayList<>();
+        Files.readAllLines(Path.of(MACDATABASE)).stream().forEach(x -> data.add(x.split(",")));
+        int numberOfDays = (data.get(0).length - 1) / 7;
+        int size = data.get(0).length;
+        LinkedHashMap<String, List<Entry>> datamap = new LinkedHashMap<>();
+        for (String[] line : data) {
+            if (line.length != size) System.err.println("Big fail, the number of columns in each row is not identical");
+            String ticker = line[0];
+            List<Entry> daysOfDataFromTicker = new ArrayList<>();
+            for (int i = 0; i < numberOfDays; i++) {
+                String followers = line[1 + i * 7 + 0];
+                String sentiment = line[1 + i * 7 + 1];
+                String message = line[1 + i * 7 + 2];
+                String low52 = line[1 + i * 7 + 3];
+                String high52 = line[1 + i * 7 + 4];
+                String marketCap = line[1 + i * 7 + 5];
+                String volume = line[1 + i * 7 + 6];
+                Entry newEntry = new Entry(followers, sentiment, message, low52, high52, marketCap, volume);
+                daysOfDataFromTicker.add(newEntry);
+            }
+            datamap.put(ticker, daysOfDataFromTicker);
+        }
+
+        return datamap;
     }
 }
