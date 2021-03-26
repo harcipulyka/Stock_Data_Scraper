@@ -38,38 +38,62 @@ public class Variables {
     }
 
     public String getTickerPath() {
-        return switch (v){
-            case PC -> PCTICKERS;
-            case PI -> PITICKERS;
-            case MAC -> MACTICKERS;
-            case DAW -> DAWTICKERS;
-        };
+        switch (v) {
+            case PC:
+                return PCTICKERS;
+            case PI:
+                return PITICKERS;
+            case MAC:
+                return MACTICKERS;
+            case DAW:
+                return DAWTICKERS;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public String getDebugPath() {
-        return switch (v){
-            case PC -> PCDEBUG;
-            case PI -> PIDEBUG;
-            case MAC -> MACDEBUG;
-            case DAW -> DAWDEBUG;
-        };
+        switch (v) {
+            case PC:
+                return PCDEBUG;
+            case PI:
+                return PIDEBUG;
+            case MAC:
+                return MACDEBUG;
+            case DAW:
+                return DAWDEBUG;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public String getDatabasePath() {
-        return switch (v){
-            case PC -> PCDATABASE;
-            case PI -> PIDATABASE;
-            case MAC -> MACDATABASE;
-            case DAW -> DAWDATABASE;
-        };
+        switch (v) {
+            case PC:
+                return PCDATABASE;
+            case PI:
+                return PIDATABASE;
+            case MAC:
+                return MACDATABASE;
+            case DAW:
+                return DAWDATABASE;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public String getExcelPath() {
-        return switch (v){
-            case PC -> PCEXCEL;
-            case PI -> PIEXCEL;
-            case MAC -> MACEXCEL;
-            case DAW -> DAWEXCEL;
-        };
+        switch (v) {
+            case PC:
+                return PCEXCEL;
+            case PI:
+                return PIEXCEL;
+            case MAC:
+                return MACEXCEL;
+            case DAW:
+                return DAWEXCEL;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }
