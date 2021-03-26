@@ -1,6 +1,8 @@
 package com.company;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public class Entry {
@@ -66,14 +68,27 @@ public class Entry {
         return s.toString();
     }
 
-    private Pair parseFollower(String follower) {
-        try {
-            String s = follower.replaceAll(",", "");
-            Integer i = Integer.parseInt(s);
-            return new Pair(s, i);
-        } catch (NumberFormatException e ){
-            return Pair.WRONG_PAIR;
+    public static String toExcel(List<Entry> daysOfTickerFromThisStock, String ticker) {
+        StringBuilder s = new StringBuilder();
+        int i = 0;
+        for(Entry e : daysOfTickerFromThisStock) {
+            s.append(ticker + ";");
+            s.append(i + ";");
+            s.append(e.follower.getString() + ";");
+            s.append(e.sentiment.getString() + ";");
+            s.append(e.message.getString() + ";");
+            s.append(parseVolume(e.volume));
+            s.append("\r\n");
+            i++;
         }
+        return s.toString();
+    }
+
+    private Pair parseFollower(String follower) {
+        if(follower.equals("NaN")) return Pair.WRONG_PAIR;
+        String s = follower.replaceAll(",", "");
+        Integer i = Integer.parseInt(s);
+        return new Pair(s, i);
     }
 
     private Pair parseDouble(String trend) {
@@ -88,5 +103,12 @@ public class Entry {
         } catch (NumberFormatException e) {
             return Pair.WRONG_PAIR;
         }
+    }
+
+    private static Double parseVolume(String volume) {
+        if(volume.equals("NaN")) return 0.0;
+        if(volume.contains("m")) return Double.parseDouble(volume.replace("m", "")) * 1000;
+        if(volume.contains("k")) return Double.parseDouble(volume.replace("k", ""));
+        return 0.0;
     }
 }

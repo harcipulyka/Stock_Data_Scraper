@@ -24,15 +24,13 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.SEVERE);
-
         long startTime = System.currentTimeMillis();
 
-        //if(args.length == 0) throw new IllegalArgumentException("Wrong syntax, specify sub program (pi, finwiz, analyst)");
+        if(args.length == 0) analyst();
+        else if(args[0].equals("excel")) excelOverwrite();
+        else if (args[0].equals("pi")) pi();
+        else if (args[0].equals("finwiz")) finwiz();
 
-//        if (args[0].equals("pi")) pi();
-//        if (args[0].equals("finwiz")) finwiz();
-//        if (args[0].equals("analyst")) ;
-        analyst();
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
 
@@ -53,6 +51,15 @@ public class Main {
         String s = entries.stream().map(Entry::toString).collect(Collectors.joining("\r\n"));
         try {
             Files.writeString((Path.of(MACDEBUG)), s);
+        }  catch (IOException e) {
+            System.err.println("Problem writing the data" + e);
+        }
+    }
+
+    //outputs the tostring version of each entry to the file
+    private static void writeStringToPath(String s, String path) {
+        try {
+            Files.writeString((Path.of(path)), s);
         }  catch (IOException e) {
             System.err.println("Problem writing the data" + e);
         }
@@ -96,7 +103,7 @@ public class Main {
         }
     }
 
-    //this method is maintained and used by the raspberry pi
+    //this method is maintained and used by the raspberry
     private static void pi() throws InterruptedException, IOException{
         List<String> tickers = getTickers();
         List<List<String>> chops = chopUpList(tickers);
@@ -150,39 +157,31 @@ public class Main {
     }
 
     private static void analyst() throws IOException{
-        LinkedHashMap<String, List<Entry>> datamap = getData();
-        List<String> tickers = datamap.keySet().stream().collect(Collectors.toList());
-        List<List<Entry>> entries = datamap.values().stream().collect(Collectors.toList());
-        HashMap<Double, String> best = new HashMap<>();
-        for (int x = 0; x < datamap.size(); x++) {
-            double percentageGrow = 0.0;
-            List<Entry> l = entries.get(x);
-            for(int i = 1; i < l.size(); i++) {
-                int today = l.get(i - 1).follower.getInteger();
-                int yesterday = l.get(i).follower.getInteger();
-                if(today == Integer.MIN_VALUE || yesterday == Integer.MIN_VALUE) {
-                    continue;
-                }
-                int difference = today - yesterday;
-                double percentageChange =  100 * ((double) difference / (double) yesterday);
-                percentageGrow += percentageChange;
-            }
-            best.put(percentageGrow, tickers.get(x));
-        }
-
-        best
-                .entrySet()
+        List<ListEntry> data = getData();
+        double average = data
                 .stream()
-                .sorted(Comparator.comparing(x -> x.getKey()))
-                .forEach(x -> System.out.println(x.getValue() + " : " + x.getKey()));
+                .mapToDouble(x -> x.differenceBetweenLastAndFirst(x.followers))
+                .average()
+                .orElse(-200.0);
+
+        System.err.println(average);
+
+        data
+                .stream()
+                //.filter(x -> (100 * (x.differenceBetweenLastAndFirst(x.followers) - average) / average) > 100)
+                .sorted(Comparator.comparing(x -> x.differenceBetweenLastAndFirst(x.followers) * -1))
+                .limit(20)
+                .forEach(x -> System.out.println(x.ticker + " : " + x.differenceBetweenLastAndFirst(x.followers)));
     }
 
-    private static LinkedHashMap<String, List<Entry>> getData() throws IOException {
+    private static List<ListEntry> getData() throws IOException {
         List<String[]> data = new ArrayList<>();
+        List<ListEntry> returns = new ArrayList<>();
         Files.readAllLines(Path.of(MACDATABASE)).stream().forEach(x -> data.add(x.split(",")));
+
         int numberOfDays = (data.get(0).length - 1) / 7;
         int size = data.get(0).length;
-        LinkedHashMap<String, List<Entry>> datamap = new LinkedHashMap<>();
+
         for (String[] line : data) {
             if (line.length != size) System.err.println("Big fail, the number of columns in each row is not identical");
             String ticker = line[0];
@@ -198,9 +197,44 @@ public class Main {
                 Entry newEntry = new Entry(followers, sentiment, message, low52, high52, marketCap, volume);
                 daysOfDataFromTicker.add(newEntry);
             }
-            datamap.put(ticker, daysOfDataFromTicker);
+            ListEntry entry = new ListEntry(daysOfDataFromTicker, ticker);
+            returns.add(entry);
         }
 
-        return datamap;
+        return returns;
+    }
+
+    //this converts the database file to an excel readable
+    private static boolean excelOverwrite() throws IOException {
+        List<String[]> data = new ArrayList<>();
+        Files.readAllLines(Path.of(MACDATABASE)).stream().forEach(x -> data.add(x.split(",")));
+
+        int numberOfDays = (data.get(0).length - 1) / 7;
+        int size = data.get(0).length;
+
+        String tmp = "Symbol,Day,Followers,Sentiment,Message,Volume (1000)\r\n";
+
+        for (String[] line : data) {
+            if (line.length != size) System.err.println("Big fail, the number of columns in each row is not identical");
+            String ticker = line[0];
+            List<Entry> daysOfDataFromTicker = new ArrayList<>();
+            for (int i = 0; i < numberOfDays; i++) {
+                String followers = line[1 + i * 7 + 0];
+                String sentiment = line[1 + i * 7 + 1];
+                String message = line[1 + i * 7 + 2];
+                String low52 = line[1 + i * 7 + 3];
+                String high52 = line[1 + i * 7 + 4];
+                String marketCap = line[1 + i * 7 + 5];
+                String volume = line[1 + i * 7 + 6];
+                Entry newEntry = new Entry(followers, sentiment, message, low52, high52, marketCap, volume);
+                daysOfDataFromTicker.add(newEntry);
+            }
+            tmp += Entry.toExcel(daysOfDataFromTicker, ticker);
+        }
+
+        System.out.println(tmp);
+        writeStringToPath(tmp, "/Users/raczbalazs/Downloads/excel.txt");
+
+        return true;
     }
 }
