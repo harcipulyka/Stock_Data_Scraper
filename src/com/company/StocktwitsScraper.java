@@ -1,16 +1,22 @@
 package com.company;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import net.sourceforge.htmlunit.corejs.javascript.json.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class StocktwitsScraper implements Runnable {
 
     final static Entry WRONG_ENTRY = new Entry("NaN","NaN", "NaN", null);
+    final static Entry _404_ENTRY = new Entry("NaN","NaN", "NaN", null);
     final static String BASE = "https://stocktwits.com/symbol/";
 
     final WebClient client;
@@ -44,7 +50,7 @@ public class StocktwitsScraper implements Runnable {
             if(p.getWebResponse().getStatusCode() == 404 || p == null) {
                 entries.add(WRONG_ENTRY);
             } else {
-                Entry newEntry = getData(p);
+                Entry newEntry = getDataJson(p, s);
                 if(newEntry != WRONG_ENTRY) System.err.println(s);
                 entries.add(newEntry);
             }
@@ -56,14 +62,19 @@ public class StocktwitsScraper implements Runnable {
     private Entry getData(HtmlPage p) {
         //followers
         HtmlStrong f = p.getFirstByXPath(".//strong");
-        if (f == null ) return WRONG_ENTRY; //this is needed against the dynamically loaded small pages, where the page can be loaded, and still not contain bold
+        if (f == null ) {
+            return WRONG_ENTRY; //this is needed against the dynamically loaded small pages, where the page can be loaded, and still not contain bold
+        }
         String followers = f.asText();
 
         //sentiment
         String page = p.asXml();
         int start = page.indexOf("\"sentimentChange\":");
         int end = page.indexOf(",\"volumeChange\":");
-        if(start == -1 || end == -1) return WRONG_ENTRY;
+        if(start == -1 || end == -1) {
+            return WRONG_ENTRY;
+            //TODO wrong page alltogether, probably not even existing ticker as of right now
+        }
         String substring = page.substring(start, end);
         String[] temp = substring.split(":");
         String sentiment = temp[1];
@@ -71,7 +82,9 @@ public class StocktwitsScraper implements Runnable {
         //volume
         start = page.indexOf("\"volumeChange\":");
         end = page.indexOf(",\"priceData\"");
-        if(start == -1 || end == -1) return WRONG_ENTRY;
+        if(start == -1 || end == -1) {
+            return WRONG_ENTRY;
+        }
         substring = page.substring(start, end);
         String[] temp2 = substring.split(":");
         String message = temp2[1];
@@ -98,6 +111,20 @@ public class StocktwitsScraper implements Runnable {
 
         Entry newEntry = new Entry(followers, sentiment, message, keyData);
         return newEntry;
+    }
+
+    private Entry getDataJson(HtmlPage p, String ticker) {
+        String pageString = p.asXml();
+        int startJson = pageString.indexOf("window.INITIAL_STATE = ");
+        int endJson = pageString.indexOf(";\n    window.JOBS_STATE");
+        String jsonString = pageString.substring((startJson + 22), endJson);
+
+        JsonObject json = Json.parse(jsonString).asObject();
+        String companyName = json.get("stocks").asObject().get("inventory").asObject().get(ticker).asObject().getString("industry", "LOFASZ BUZINESSZ");
+
+        System.err.println("ticker " + ticker + " works in " + companyName + " buzinessz");
+
+        return null;
     }
 
     public void run() {

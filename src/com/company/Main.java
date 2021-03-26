@@ -8,28 +8,16 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    //region constants
     public static final int THREADCOUNT = 10;
-
-    public static final String PCTICKERS = "C:\\Users\\balazs\\Downloads\\1000.txt";
-    public static final String MACTICKERS = "/Users/raczbalazs/Downloads/tickers.txt";
-    public final static String PITICKERS = "";
-
-    public final static String PCDEBUG = "C:\\Users\\balazs\\Downloads\\1002.txt";
-    public final static String MACDEBUG = "/Users/raczbalazs/Downloads/1002.txt";
-    public final static String PIDEBUG = "";
-
-    public final static String MACDATABASE = "/Users/raczbalazs/Downloads/database.txt";
-    //endregion
+    public static Variables var = new Variables(Variables.Version.PC);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.SEVERE);
         long startTime = System.currentTimeMillis();
 
-        if(args.length == 0) analyst();
-        else if(args[0].equals("excel")) excelOverwrite();
-        else if (args[0].equals("pi")) pi();
-        else if (args[0].equals("finwiz")) finwiz();
+        //excelOverwrite();
+        pi();
+        //finwiz();
 
         System.out.println((System.currentTimeMillis() - startTime) / 1000);
     }
@@ -37,7 +25,7 @@ public class Main {
     //gets the tickers and returns them in a list of strings
     private static List<String> getTickers() {
         try {
-            String tickers = Files.readString(Path.of(MACTICKERS));
+            String tickers = Files.readString(Path.of(var.getTickerPath()));
             String[] tickers2 = tickers.split("\r\n");
             return Arrays.stream(tickers2).collect(Collectors.toList());
         } catch (IOException e) {
@@ -50,13 +38,13 @@ public class Main {
     private static void writeTickers(List<Entry> entries) {
         String s = entries.stream().map(Entry::toString).collect(Collectors.joining("\r\n"));
         try {
-            Files.writeString((Path.of(MACDEBUG)), s);
+            Files.writeString((Path.of(var.getDebugPath())), s);
         }  catch (IOException e) {
             System.err.println("Problem writing the data" + e);
         }
     }
 
-    //outputs the tostring version of each entry to the file
+    //outputs a string simply to the parameter path
     private static void writeStringToPath(String s, String path) {
         try {
             Files.writeString((Path.of(path)), s);
@@ -85,7 +73,7 @@ public class Main {
 
     //writes out the data to an existing csv file, if the line count is the same entry list size
     private static void appendGoodFile(List<Entry> entries) throws IOException{
-        Path database = Path.of(MACDATABASE);
+        Path database = Path.of(var.getDatabasePath());
 
         List<String> lines = Files.readAllLines(database);
         if(lines.size() != entries.size()) {
@@ -127,12 +115,12 @@ public class Main {
             entries.addAll(s.result);
         }
 
-        writeTickers(entries);
-        appendGoodFile(entries);
+        //writeTickers(entries);
+        //appendGoodFile(entries);
     }
 
     //reads in the tickers, and scrapes finwiz for those tickers, no output atm
-    private static void finwiz() throws InterruptedException, IOException{
+    private static void finwiz() throws InterruptedException{
         List<String> tickerSymbols = getTickers();
         List<List<String>> chops = chopUpList(tickerSymbols);
         List<Finwiz> scrapers = new ArrayList<>();
@@ -156,28 +144,11 @@ public class Main {
         }
     }
 
-    private static void analyst() throws IOException{
-        List<ListEntry> data = getData();
-        double average = data
-                .stream()
-                .mapToDouble(x -> x.differenceBetweenLastAndFirst(x.followers))
-                .average()
-                .orElse(-200.0);
-
-        System.err.println(average);
-
-        data
-                .stream()
-                //.filter(x -> (100 * (x.differenceBetweenLastAndFirst(x.followers) - average) / average) > 100)
-                .sorted(Comparator.comparing(x -> x.differenceBetweenLastAndFirst(x.followers) * -1))
-                .limit(20)
-                .forEach(x -> System.out.println(x.ticker + " : " + x.differenceBetweenLastAndFirst(x.followers)));
-    }
-
-    private static List<ListEntry> getData() throws IOException {
+    //returns all the data entry by ticker
+    private static Map<String, List<Entry>> getData() throws IOException {
         List<String[]> data = new ArrayList<>();
-        List<ListEntry> returns = new ArrayList<>();
-        Files.readAllLines(Path.of(MACDATABASE)).stream().forEach(x -> data.add(x.split(",")));
+        HashMap<String, List<Entry>> daysOfData = new HashMap<>();
+        Files.readAllLines(Path.of(var.getDatabasePath())).stream().forEach(x -> data.add(x.split(",")));
 
         int numberOfDays = (data.get(0).length - 1) / 7;
         int size = data.get(0).length;
@@ -185,7 +156,7 @@ public class Main {
         for (String[] line : data) {
             if (line.length != size) System.err.println("Big fail, the number of columns in each row is not identical");
             String ticker = line[0];
-            List<Entry> daysOfDataFromTicker = new ArrayList<>();
+            List<Entry> daysOfDataTemp = new ArrayList<>();
             for (int i = 0; i < numberOfDays; i++) {
                 String followers = line[1 + i * 7 + 0];
                 String sentiment = line[1 + i * 7 + 1];
@@ -195,19 +166,18 @@ public class Main {
                 String marketCap = line[1 + i * 7 + 5];
                 String volume = line[1 + i * 7 + 6];
                 Entry newEntry = new Entry(followers, sentiment, message, low52, high52, marketCap, volume);
-                daysOfDataFromTicker.add(newEntry);
+                daysOfDataTemp.add(newEntry);
             }
-            ListEntry entry = new ListEntry(daysOfDataFromTicker, ticker);
-            returns.add(entry);
+            daysOfData.put(ticker, daysOfDataTemp);
         }
 
-        return returns;
+        return daysOfData;
     }
 
     //this converts the database file to an excel readable
     private static boolean excelOverwrite() throws IOException {
         List<String[]> data = new ArrayList<>();
-        Files.readAllLines(Path.of(MACDATABASE)).stream().forEach(x -> data.add(x.split(",")));
+        Files.readAllLines(Path.of(var.getDatabasePath())).stream().forEach(x -> data.add(x.split(",")));
 
         int numberOfDays = (data.get(0).length - 1) / 7;
         int size = data.get(0).length;
@@ -233,7 +203,7 @@ public class Main {
         }
 
         System.out.println(tmp);
-        writeStringToPath(tmp, "/Users/raczbalazs/Downloads/excel.txt");
+        writeStringToPath(tmp, var.getExcelPath());
 
         return true;
     }

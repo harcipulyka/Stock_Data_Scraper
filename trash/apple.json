@@ -1,0 +1,578 @@
+{
+  "ads":{
+    "awaitingRefresh":false,
+    "channel":"",
+    "initialized":false,
+    "queue":[
+
+    ],
+    "pathname":""
+  },
+  "analytics":{
+    "Context":"",
+    "pathname":"",
+    "Platform":"",
+    "user":{
+
+    }
+  },
+  "announcements":{
+    "latest":{
+
+    },
+    "dismissed":[
+
+    ]
+  },
+  "advancedSearch":{
+    "countsFetchingState":"initial",
+    "fetchingState":"initial",
+    "messages":[
+
+    ],
+    "symbolCounts":[
+
+    ],
+    "total":0
+  },
+  "content":{
+
+  },
+  "currentUser":{
+    "directMessages":{
+      "isFetching":false,
+      "cursor":{
+
+      },
+      "items":{
+
+      },
+      "unread":0
+    },
+    "followSuggestions":{
+      "fetchError":false,
+      "isFetching":false,
+      "userIds":[
+
+      ],
+      "users":{
+
+      }
+    },
+    "info":{
+      "isAuthenticated":false
+    },
+    "notifications":{
+      "cursor":{
+
+      },
+      "isFetching":false,
+      "items":{
+
+      },
+      "itemIds":[
+
+      ],
+      "listType":"NotificationList",
+      "unread":0
+    },
+    "rooms":{
+      "allRooms":{
+
+      }
+    },
+    "roomsNotifications":{
+      "allUnreadCount":0,
+      "notifications":{
+
+      }
+    }
+  },
+  "form":{
+
+  },
+  "messages":{
+    "pathname":null
+  },
+  "messagePrices":{
+
+  },
+  "modal":{
+    "chart":null,
+    "conversation":{
+      "cursor":{
+
+      },
+      "messages":[
+
+      ],
+      "parent":{
+
+      }
+    },
+    "direct":{
+      "cursor":{
+
+      },
+      "conversation":{
+        "id":null,
+        "subjectUser":{
+          "id":null
+        }
+      },
+      "directMessages":[
+
+      ],
+      "isFetching":false,
+      "hasError":false
+    },
+    "message":{
+      "id":null,
+      "userId":null,
+      "likes":{
+        "userIds":[
+
+        ]
+      }
+    },
+    "article":null,
+    "hasConversation":false,
+    "hasMessage":false,
+    "isOpen":false,
+    "modalType":"",
+    "showLoginModal":false,
+    "stock":null,
+    "zoom":"3m",
+    "pathname":null,
+    "isDirect":false
+  },
+  "navigation":{
+    "showStocksMenu":false
+  },
+  "notification":{
+    "banner":{
+      "icon":null,
+      "message":""
+    },
+    "icon":"",
+    "message":"",
+    "type":""
+  },
+  "plus":{
+    "status":"none",
+    "selectedTier":"month"
+  },
+  "profile":{
+    "info":{
+      "fetchError":false,
+      "isFetching":false,
+      "lastUpdated":null,
+      "mostMentioned":[
+
+      ],
+      "notFound":false
+    }
+  },
+  "rooms":{
+    "bySlug":{
+
+    },
+    "stocks":{
+
+    },
+    "users":{
+
+    }
+  },
+  "search":{
+    "cursor":{
+
+    },
+    "isFetching":false,
+    "items":[
+
+    ],
+    "listType":"SearchList",
+    "pathname":null,
+    "results":{
+      "symbols":[
+
+      ],
+      "users":[
+
+      ],
+      "topics":[
+
+      ]
+    },
+    "recentlyViewed":[
+
+    ],
+    "searchValue":"",
+    "showPill":false,
+    "suggestions":[
+
+    ]
+  },
+  "settings":{
+    "blocked":{
+      "users":{
+
+      },
+      "userIds":[
+
+      ]
+    },
+    "muted":{
+      "users":{
+
+      },
+      "userIds":[
+
+      ]
+    },
+    "preferences":{
+      "notifications":{
+        "email":{
+
+        }
+      }
+    },
+    "connections":{
+      "twitter":{
+        "connected":false,
+        "shouldShare":false
+      }
+    },
+    "tradingStrategyOptions":{
+      "approach":[
+        "Technical",
+        "Fundamental",
+        "Global Macro",
+        "Momentum",
+        "Growth",
+        "Value"
+      ],
+      "assetClassesTraded":[
+        "Equities",
+        "Options",
+        "Forex",
+        "Futures",
+        "Bonds",
+        "Private Companies"
+      ],
+      "holdingPeriod":[
+        "Day Trader",
+        "Swing Trader",
+        "Position Trader",
+        "Long Term Investor"
+      ],
+      "tradingExperience":[
+        "Novice",
+        "Intermediate",
+        "Professional"
+      ]
+    },
+    "user":{
+
+    }
+  },
+  "signals":{
+    "default":{
+      "chart":{
+        "wlHr":{
+
+        },
+        "wlT":{
+
+        },
+        "wlCtDay":{
+
+        },
+        "wlCpDay":{
+
+        },
+        "mHr":{
+
+        },
+        "mHrBull":{
+
+        },
+        "mHrBear":{
+
+        },
+        "mDay":{
+
+        },
+        "mDayBull":{
+
+        },
+        "mDayBear":{
+
+        },
+        "ts":{
+
+        }
+      },
+      "labelY":{
+
+      },
+      "status":"initial",
+      "stocks":{
+
+      },
+      "table":{
+        "wlHr":[
+
+        ],
+        "wlT":[
+
+        ],
+        "wlCtDay":[
+
+        ],
+        "wlCpDay":[
+
+        ],
+        "mHr":[
+
+        ],
+        "mHrBull":[
+
+        ],
+        "mHrBear":[
+
+        ],
+        "mDay":[
+
+        ],
+        "mDayBull":[
+
+        ],
+        "mDayBear":[
+
+        ],
+        "ts":[
+
+        ]
+      }
+    }
+  },
+  "stocks":{
+    "inventory":{
+      "AAPL":{
+        "fundamentals":{
+          "totalDebt":"112043",
+          "grossIncomeMargin":"38.6891904303486",
+          "earningsGrowth":"17.2327",
+          "totalExpenses":"220050",
+          "eps":"3.6991",
+          "sharesHeldByInstitutions":"9994.604724",
+          "totalEnterpriseValue":"2293710",
+          "averageDailyVolumeLastMonth":"96527504.8947",
+          "revenuePerEmployee":"1999802.721",
+          "ebitda":"84827",
+          "bookValuePerShare":"3.93645",
+          "priceToBook":"30.6342",
+          "totalLiabilities":"287830",
+          "numberOfEmployees":"147000",
+          "symbol":"AAPL",
+          "beta":"1.2440",
+          "floatCurrent":"16771.8",
+          "totalAssets":"354054",
+          "dividendsPerShareSecurity":"0.205",
+          "peRatio":"32.60",
+          "industryName":"Telecommunications Equipment",
+          "enterpriseOverEbitda":"27.04",
+          "5YearAveragePeRatio":"20.39",
+          "highPriceLast52Weeks":"145.09",
+          "marketCapitalization":"2024476.979",
+          "name":"Apple Inc",
+          "salesOrRevenue":"293971",
+          "lowPriceLast52Weeks":"59.225",
+          "fiscalPeriodEndDate":"12/31/2020 12:00:00 AM",
+          "dividendExDate":"11/06/2020 00:00:00",
+          "businessDescription":"Apple, Inc. engages in the design, manufacture, and sale of smartphones, personal computers, tablets, wearables and accessories, and other variety of related services. It operates through the following geographical segments: Americas, Europe, Greater China, Japan, and Rest of Asia Pacific. The Americas segment includes North and South America. The Europe segment consists of European countries, as well as India, the Middle East, and Africa. The Greater China segment comprises of China, Hong Kong, and Taiwan. The Rest of Asia Pacific segment includes Australia and Asian countries. Its products and services include iPhone, Mac, iPad, AirPods, Apple TV, Apple Watch, Beats products, Apple Care, iCloud, digital content stores, streaming, and licensing services. The company was founded by Steven Paul Jobs, Ronald Gerald Wayne, and Stephen G. Wozniak in 1977 and is headquartered in Cupertino, CA.",
+          "sectorName":"Electronic Technology",
+          "50DayMovingAverage":"128.7483",
+          "dividendRate":"2.05",
+          "pegRatio":"2.07",
+          "totalCash":"25041",
+          "dividendYieldSecurity":"0.708051",
+          "revenueToAssets":"0.8303",
+          "lastUpdated":"03/26/2021",
+          "dividendPayoutRatio":"24.2718446601942",
+          "sharesOutstanding":"16823.263",
+          "averageDailyVolumeLast3Months":"111270360.9016"
+        },
+        "sentimentData":{
+          "isFetching":false,
+          "showSentiment":false,
+          "hasData":false
+        },
+        "volumeData":{
+          "isFetching":false,
+          "hasData":false
+        },
+        "symbol":"AAPL",
+        "id":686,
+        "title":"Apple Inc.",
+        "aliases":[
+
+        ],
+        "isFollowing":false,
+        "watchlistCount":673038,
+        "exchange":"NASDAQ",
+        "sector":"ElectronicTechnology",
+        "industry":"TelecommunicationsEquipment",
+        "logoUrl":"http://logos.xignite.com/NASDAQGS/00011843.gif",
+        "trending":false,
+        "trendingScore":0.97375,
+        "sentimentChange":-0.19,
+        "volumeChange":-5.38,
+        "priceData":{
+          "previousClose":120.09,
+          "dateTime":"2021-03-25 20:00:00",
+          "low":119,
+          "extendedHoursPercentChange":-0.041,
+          "extendedHoursDateTime":"2021-03-26 13:20:42",
+          "type":"equity",
+          "identifier":"AAPL",
+          "extendedHoursPrice":120.56,
+          "symbol":"AAPL",
+          "previousCloseDate":"2021-03-24",
+          "volume":1066766,
+          "lastSize":5139501,
+          "percentChange":0.416,
+          "change":0.5,
+          "last":120.59,
+          "outcome":"Success",
+          "extendedHoursType":"PreMarket",
+          "high":121.66,
+          "extendedHoursChange":-0.05,
+          "open":119.54
+        },
+        "lastUpdated":"03/26/2021, 09:20:42 AM EDT",
+        "previousClose":120.09,
+        "dateTime":"2021-03-25 20:00:00",
+        "low":119,
+        "extendedHoursPercentChange":-0.041,
+        "extendedHoursDateTime":"2021-03-26 13:20:42",
+        "type":"equity",
+        "identifier":"AAPL",
+        "extendedHoursPrice":120.56,
+        "previousCloseDate":"2021-03-24",
+        "volume":1066766,
+        "lastSize":5139501,
+        "percentChange":0.416,
+        "change":0.5,
+        "last":120.59,
+        "outcome":"Success",
+        "extendedHoursType":"PreMarket",
+        "high":121.66,
+        "extendedHoursChange":-0.05,
+        "open":119.54,
+        "quote":{
+          "extendedHoursChange":-0.05,
+          "extendedHoursType":"PreMarket",
+          "open":119.54,
+          "outcome":"Success",
+          "last":120.59,
+          "extendedHoursPrice":120.56,
+          "easternDateTime":"03/25/2021, 04:00:00 PM EDT",
+          "previousCloseDate":"2021-03-24",
+          "symbol":"AAPL",
+          "previousClose":120.09,
+          "dateTime":"2021-03-25 20:00:00",
+          "volume":1066766,
+          "lastSize":"5139501",
+          "low":119,
+          "percentChange":0.416,
+          "high":121.66,
+          "extendedHoursPercentChange":-0.041,
+          "extendedHoursDateTime":"2021-03-26 13:20:42",
+          "easternExtendedHoursDateTime":"03/26/2021, 09:20:42 AM EDT",
+          "type":"equity",
+          "change":0.5
+        }
+      }
+    },
+    "isFetching":false,
+    "isUpdating":false,
+    "indices":[
+      "DIA",
+      "SPY",
+      "QQQ"
+    ],
+    "topStocks":[
+
+    ],
+    "trending":[
+
+    ],
+    "userWatchlist":[
+
+    ],
+    "heatmap":{
+
+    }
+  },
+  "stream":{
+    "items":{
+
+    },
+    "byId":{
+
+    },
+    "socket":{
+      "streamId":null,
+      "streamType":null,
+      "socketId":null
+    },
+    "flowing":false,
+    "filter":"top",
+    "filterSet":false
+  },
+  "users":{
+
+  },
+  "st":{
+    "autosuggest":{
+
+    },
+    "earnings":{
+      "dates":{
+
+      },
+      "fetchError":false,
+      "isFetching":true,
+      "symbols":[
+
+      ]
+    },
+    "news":{
+      "articlesById":{
+
+      },
+      "bucketsById":{
+
+      }
+    },
+    "plus":{
+      "marketHours":{
+        "isOpen":true,
+        "nextClose":"",
+        "nextOpen":""
+      },
+      "theme":{
+        "viewMode":"lightMode"
+      }
+    },
+    "referenceCurrentDate":{
+      "date":"2021-03-25T20:30:19.528Z"
+    },
+    "watchlists":{
+      "state":"initial"
+    }
+  }
+}
