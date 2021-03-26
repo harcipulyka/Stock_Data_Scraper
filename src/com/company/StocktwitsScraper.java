@@ -120,9 +120,13 @@ public class StocktwitsScraper implements Runnable {
         String jsonString = pageString.substring((startJson + 22), endJson);
 
         JsonObject json = Json.parse(jsonString).asObject();
-        String companyName = json.get("stocks").asObject().get("inventory").asObject().get(ticker).asObject().getString("industry", "LOFASZ BUZINESSZ");
-
-        System.err.println("ticker " + ticker + " works in " + companyName + " buzinessz");
+        JsonObject companyData = json.get("stocks").asObject().get("inventory").asObject().get(ticker).asObject();
+        JsonValue foundCompany = companyData.get("notFound");
+        JsonValue trending = companyData.get("trending");
+        JsonValue trendingScore = companyData.get("trendingScore");
+        JsonValue msgVolume = companyData.get("volumeChange");
+        JsonValue sentiment = companyData.get("sentimentChange");
+        JsonValue followers = companyData.get("watchlistCount");
 
         return null;
     }

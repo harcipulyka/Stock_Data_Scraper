@@ -1,0 +1,466 @@
+{
+  "ads":{
+    "awaitingRefresh":false,
+    "channel":"",
+    "initialized":false,
+    "queue":[
+
+    ],
+    "pathname":""
+  },
+  "analytics":{
+    "Context":"",
+    "pathname":"",
+    "Platform":"",
+    "user":{
+
+    }
+  },
+  "announcements":{
+    "latest":{
+
+    },
+    "dismissed":[
+
+    ]
+  },
+  "advancedSearch":{
+    "countsFetchingState":"initial",
+    "fetchingState":"initial",
+    "messages":[
+
+    ],
+    "symbolCounts":[
+
+    ],
+    "total":0
+  },
+  "content":{
+
+  },
+  "currentUser":{
+    "directMessages":{
+      "isFetching":false,
+      "cursor":{
+
+      },
+      "items":{
+
+      },
+      "unread":0
+    },
+    "followSuggestions":{
+      "fetchError":false,
+      "isFetching":false,
+      "userIds":[
+
+      ],
+      "users":{
+
+      }
+    },
+    "info":{
+      "isAuthenticated":false
+    },
+    "notifications":{
+      "cursor":{
+
+      },
+      "isFetching":false,
+      "items":{
+
+      },
+      "itemIds":[
+
+      ],
+      "listType":"NotificationList",
+      "unread":0
+    },
+    "rooms":{
+      "allRooms":{
+
+      }
+    },
+    "roomsNotifications":{
+      "allUnreadCount":0,
+      "notifications":{
+
+      }
+    }
+  },
+  "form":{
+
+  },
+  "messages":{
+    "pathname":null
+  },
+  "messagePrices":{
+
+  },
+  "modal":{
+    "chart":null,
+    "conversation":{
+      "cursor":{
+
+      },
+      "messages":[
+
+      ],
+      "parent":{
+
+      }
+    },
+    "direct":{
+      "cursor":{
+
+      },
+      "conversation":{
+        "id":null,
+        "subjectUser":{
+          "id":null
+        }
+      },
+      "directMessages":[
+
+      ],
+      "isFetching":false,
+      "hasError":false
+    },
+    "message":{
+      "id":null,
+      "userId":null,
+      "likes":{
+        "userIds":[
+
+        ]
+      }
+    },
+    "article":null,
+    "hasConversation":false,
+    "hasMessage":false,
+    "isOpen":false,
+    "modalType":"",
+    "showLoginModal":false,
+    "stock":null,
+    "zoom":"3m",
+    "pathname":null,
+    "isDirect":false
+  },
+  "navigation":{
+    "showStocksMenu":false
+  },
+  "notification":{
+    "banner":{
+      "icon":null,
+      "message":""
+    },
+    "icon":"",
+    "message":"",
+    "type":""
+  },
+  "plus":{
+    "status":"none",
+    "selectedTier":"month"
+  },
+  "profile":{
+    "info":{
+      "fetchError":false,
+      "isFetching":false,
+      "lastUpdated":null,
+      "mostMentioned":[
+
+      ],
+      "notFound":false
+    }
+  },
+  "rooms":{
+    "bySlug":{
+
+    },
+    "stocks":{
+
+    },
+    "users":{
+
+    }
+  },
+  "search":{
+    "cursor":{
+
+    },
+    "isFetching":false,
+    "items":[
+
+    ],
+    "listType":"SearchList",
+    "pathname":null,
+    "results":{
+      "symbols":[
+
+      ],
+      "users":[
+
+      ],
+      "topics":[
+
+      ]
+    },
+    "recentlyViewed":[
+
+    ],
+    "searchValue":"",
+    "showPill":false,
+    "suggestions":[
+
+    ]
+  },
+  "settings":{
+    "blocked":{
+      "users":{
+
+      },
+      "userIds":[
+
+      ]
+    },
+    "muted":{
+      "users":{
+
+      },
+      "userIds":[
+
+      ]
+    },
+    "preferences":{
+      "notifications":{
+        "email":{
+
+        }
+      }
+    },
+    "connections":{
+      "twitter":{
+        "connected":false,
+        "shouldShare":false
+      }
+    },
+    "tradingStrategyOptions":{
+      "approach":[
+        "Technical",
+        "Fundamental",
+        "Global Macro",
+        "Momentum",
+        "Growth",
+        "Value"
+      ],
+      "assetClassesTraded":[
+        "Equities",
+        "Options",
+        "Forex",
+        "Futures",
+        "Bonds",
+        "Private Companies"
+      ],
+      "holdingPeriod":[
+        "Day Trader",
+        "Swing Trader",
+        "Position Trader",
+        "Long Term Investor"
+      ],
+      "tradingExperience":[
+        "Novice",
+        "Intermediate",
+        "Professional"
+      ]
+    },
+    "user":{
+
+    }
+  },
+  "signals":{
+    "default":{
+      "chart":{
+        "wlHr":{
+
+        },
+        "wlT":{
+
+        },
+        "wlCtDay":{
+
+        },
+        "wlCpDay":{
+
+        },
+        "mHr":{
+
+        },
+        "mHrBull":{
+
+        },
+        "mHrBear":{
+
+        },
+        "mDay":{
+
+        },
+        "mDayBull":{
+
+        },
+        "mDayBear":{
+
+        },
+        "ts":{
+
+        }
+      },
+      "labelY":{
+
+      },
+      "status":"initial",
+      "stocks":{
+
+      },
+      "table":{
+        "wlHr":[
+
+        ],
+        "wlT":[
+
+        ],
+        "wlCtDay":[
+
+        ],
+        "wlCpDay":[
+
+        ],
+        "mHr":[
+
+        ],
+        "mHrBull":[
+
+        ],
+        "mHrBear":[
+
+        ],
+        "mDay":[
+
+        ],
+        "mDayBull":[
+
+        ],
+        "mDayBear":[
+
+        ],
+        "ts":[
+
+        ]
+      }
+    }
+  },
+  "stocks":{
+    "inventory":{
+      "NOSUCHSTOCK":{
+        "fundamentals":{
+
+        },
+        "sentimentData":{
+          "isFetching":false,
+          "showSentiment":false,
+          "hasData":false
+        },
+        "volumeData":{
+          "isFetching":false,
+          "hasData":false
+        },
+        "symbol":"NOSUCHSTOCK",
+        "notFound":true
+      },
+      "undefined":{
+        "fundamentals":{
+
+        },
+        "quote":{
+
+        }
+      }
+    },
+    "isFetching":false,
+    "isUpdating":false,
+    "indices":[
+      "DIA",
+      "SPY",
+      "QQQ"
+    ],
+    "topStocks":[
+
+    ],
+    "trending":[
+
+    ],
+    "userWatchlist":[
+
+    ],
+    "heatmap":{
+
+    }
+  },
+  "stream":{
+    "items":{
+
+    },
+    "byId":{
+
+    },
+    "socket":{
+      "streamId":null,
+      "streamType":null,
+      "socketId":null
+    },
+    "flowing":false,
+    "filter":"top",
+    "filterSet":false
+  },
+  "users":{
+
+  },
+  "st":{
+    "autosuggest":{
+
+    },
+    "earnings":{
+      "dates":{
+
+      },
+      "fetchError":false,
+      "isFetching":true,
+      "symbols":[
+
+      ]
+    },
+    "news":{
+      "articlesById":{
+
+      },
+      "bucketsById":{
+
+      }
+    },
+    "plus":{
+      "marketHours":{
+        "isOpen":true,
+        "nextClose":"",
+        "nextOpen":""
+      },
+      "theme":{
+        "viewMode":"lightMode"
+      }
+    },
+    "referenceCurrentDate":{
+      "date":"2021-03-26T12:17:00.318Z"
+    },
+    "watchlists":{
+      "state":"initial"
+    }
+  }
+}

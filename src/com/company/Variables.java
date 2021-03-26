@@ -24,6 +24,9 @@ public class Variables {
     public final static String DAWDATABASE = "";
     public final static String DAWEXCEL = "";
 
+    public final static float undefinedFloat = 69.420f;
+    public final static String undefinedString = "undefinedString";
+
     public final Version v;
 
     public Variables(Version v) {
