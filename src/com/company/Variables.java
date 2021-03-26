@@ -3,10 +3,9 @@ package com.company;
 public class Variables {
     public static final int THREADCOUNT = 10;
 
-    public static final String PCTICKERS = "C:\\Users\\balazs\\Downloads\\6000-x.txt";
-    //public static final String PCTICKERS = "C:\\Users\\balazs\\Desktop\\20.txt";
-    public static final String PCDEBUG = "C:\\Users\\balazs\\Downloads\\1002.txt";
-    public static final String PCDATABASE = "";
+    public static final String PCTICKERS = "C:\\Users\\balazs\\Downloads\\final_tickerlist.txt";
+    public static final String PCDEBUG = "C:\\Users\\balazs\\Downloads\\debug.txt";
+    public static final String PCDATABASE = "C:\\Users\\balazs\\Downloads\\final_database.txt";
     public static final String PCEXCEL = "";
 
     public static final String MACTICKERS = "/Users/raczbalazs/Downloads/tickers.txt";
@@ -25,6 +24,7 @@ public class Variables {
     public final static String DAWEXCEL = "";
 
     public final static float undefinedFloat = 69.420f;
+    public final static int undefinedInteger = 696969;
     public final static String undefinedString = "undefinedString";
 
     public final Version v;

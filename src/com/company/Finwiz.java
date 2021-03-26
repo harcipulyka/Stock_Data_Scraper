@@ -37,7 +37,7 @@ public class Finwiz implements Runnable{
             for(String s : symbols) {
                 HtmlPage p = client.getPage(BASE + s);
                 if(p.getWebResponse().getStatusCode() == 404 || p == null) {
-                    System.err.println("404 error with link " + BASE + s);
+                    System.out.println("404 error with link " + BASE + s);
                 } else {
                     switch (type) {
                         case OVERVIEW -> parseOverview(p);
@@ -46,7 +46,7 @@ public class Finwiz implements Runnable{
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error getting the page " + e);
+            System.out.println("Error getting the page " + e);
         }
 
     }
@@ -55,7 +55,7 @@ public class Finwiz implements Runnable{
         HtmlTable table = p.getFirstByXPath("//table[@class='snapshot-table2']");
 
         if(table == null) {
-            System.err.println("No table found on the website " + p.getUrl());
+            System.out.println("No table found on the website " + p.getUrl());
             return;
         }
 

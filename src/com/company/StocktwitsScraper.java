@@ -5,30 +5,26 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-import net.sourceforge.htmlunit.corejs.javascript.json.JsonParser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class StocktwitsScraper implements Runnable {
 
-    final static Entry WRONG_ENTRY = new Entry("NaN","NaN", "NaN", null);
-    final static Entry _404_ENTRY = new Entry("NaN","NaN", "NaN", null);
     final static String BASE = "https://stocktwits.com/symbol/";
+    public static Integer numberOfNot = 0;
 
     final WebClient client;
-    final List<String> links;
-    List<Entry> result = new ArrayList<>();
+    final List<String> tickers;
+    List<Data> result = new ArrayList<>();
 
-    public StocktwitsScraper(List<String> links) {
+    public StocktwitsScraper(List<String> tickers) {
         client = new WebClient();
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(false);
         client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        this.links = links;
+        this.tickers = tickers;
     }
 
     private HtmlPage getPage (String ticker) {
@@ -37,21 +33,21 @@ public class StocktwitsScraper implements Runnable {
             page = client.getPage(BASE + ticker);
             return page;
         }catch(Exception e){
-            System.err.println("Small problem with this link" + e);
+            System.out.println("Error with the link " + ticker + " : " + e);
             return null;
         }
     }
 
-    public List<Entry> parsePages() {
-        List<Entry> entries = new ArrayList<>();
+    public List<Data> parsePages() {
+        List<Data> entries = new ArrayList<>();
 
-        for (String s : links) {
+        for (String s : tickers) {
             HtmlPage p = getPage(s);
             if(p.getWebResponse().getStatusCode() == 404 || p == null) {
-                entries.add(WRONG_ENTRY);
+                System.out.println("The website returned 404 with the ticker " + s);
+                entries.add(new Data(s, false, Variables.undefinedInteger, Variables.undefinedFloat, Variables.undefinedFloat, Variables.undefinedInteger, Variables.undefinedFloat));
             } else {
-                Entry newEntry = getDataJson(p, s);
-                if(newEntry != WRONG_ENTRY) System.err.println(s);
+                Data newEntry = getDataJson(p, s);
                 entries.add(newEntry);
             }
         }
@@ -59,76 +55,55 @@ public class StocktwitsScraper implements Runnable {
         return entries;
     }
 
-    private Entry getData(HtmlPage p) {
-        //followers
-        HtmlStrong f = p.getFirstByXPath(".//strong");
-        if (f == null ) {
-            return WRONG_ENTRY; //this is needed against the dynamically loaded small pages, where the page can be loaded, and still not contain bold
-        }
-        String followers = f.asText();
-
-        //sentiment
-        String page = p.asXml();
-        int start = page.indexOf("\"sentimentChange\":");
-        int end = page.indexOf(",\"volumeChange\":");
-        if(start == -1 || end == -1) {
-            return WRONG_ENTRY;
-            //TODO wrong page alltogether, probably not even existing ticker as of right now
-        }
-        String substring = page.substring(start, end);
-        String[] temp = substring.split(":");
-        String sentiment = temp[1];
-
-        //volume
-        start = page.indexOf("\"volumeChange\":");
-        end = page.indexOf(",\"priceData\"");
-        if(start == -1 || end == -1) {
-            return WRONG_ENTRY;
-        }
-        substring = page.substring(start, end);
-        String[] temp2 = substring.split(":");
-        String message = temp2[1];
-
-        //fundamentals
-        List<HtmlListItem> fundamentals = p.getByXPath("//li");
-        Map<String, String> keyData = new HashMap<>();
-        for(HtmlListItem l : fundamentals) {
-            List<HtmlSpan> span = l.getByXPath("span");
-            if(span.size() == 2) {
-                String attributeName = span.get(0).asText();
-                String value = span.get(1).asText();
-                keyData.put(attributeName, value);
-            }
-        }
-
-        //exchange market
-        /*
-        HtmlDivision exchange = p.getFirstByXPath("//div[@class='st_3BauJpd st_3OfMfdC st_3TuKxmZ']");
-        HtmlSpan companyName = exchange.getFirstByXPath("span");
-        String tmp = exchange.asText().replace(companyName.asText(), "");
-        String[] tmp2 = tmp.split(" ");
-        */
-
-        Entry newEntry = new Entry(followers, sentiment, message, keyData);
-        return newEntry;
-    }
-
-    private Entry getDataJson(HtmlPage p, String ticker) {
+    private Data getDataJson(HtmlPage p, String ticker) {
         String pageString = p.asXml();
         int startJson = pageString.indexOf("window.INITIAL_STATE = ");
         int endJson = pageString.indexOf(";\n    window.JOBS_STATE");
         String jsonString = pageString.substring((startJson + 22), endJson);
+        JsonObject companyData;
+        try {
+            JsonObject json = Json.parse(jsonString).asObject();
+            companyData = json.get("stocks").asObject().get("inventory").asObject().get(ticker).asObject();
+        } catch (NullPointerException e) {
+            System.out.println("Error getting the json object for the " + numberOfNot  + "th time");
+            numberOfNot++;
+            return new Data(ticker, false, Variables.undefinedInteger, Variables.undefinedFloat, Variables.undefinedFloat, Variables.undefinedInteger, Variables.undefinedFloat);
+        }
+        JsonValue _foundCompany = companyData.get("notFound");
+        JsonValue _trending = companyData.get("trending");
+        JsonValue _trendingScore = companyData.get("trendingScore");
+        JsonValue _msgVolume = companyData.get("volumeChange");
+        JsonValue _sentiment = companyData.get("sentimentChange");
+        JsonValue _followers = companyData.get("watchlistCount");
 
-        JsonObject json = Json.parse(jsonString).asObject();
-        JsonObject companyData = json.get("stocks").asObject().get("inventory").asObject().get(ticker).asObject();
-        JsonValue foundCompany = companyData.get("notFound");
-        JsonValue trending = companyData.get("trending");
-        JsonValue trendingScore = companyData.get("trendingScore");
-        JsonValue msgVolume = companyData.get("volumeChange");
-        JsonValue sentiment = companyData.get("sentimentChange");
-        JsonValue followers = companyData.get("watchlistCount");
+        boolean foundCompany; //true if found data, false if didnt
+        int trending; //0 i found this variables and was true, 1 if found but was false, aand 2 if it didn't found it
+        float trendingScore; //trending score is the trending score variable, if it found that variable, if didn't then its set to variables.undefinedFloat
+        float msgVolume; //same as trending score, if finds it then it sets to that, if it doesnt find it, then the basic variable gets assigned to it
+        float sentiment; //same as above two
+        int followers;
 
-        return null;
+        if(_trending != null) {
+            if(_trending.asBoolean()) trending = 0;
+            else trending = 1;
+        } else trending = 2;
+
+        if(_foundCompany != null) foundCompany = _foundCompany.asBoolean();
+        else foundCompany = true;
+
+        if(_trendingScore != null) trendingScore = _trendingScore.asFloat();
+        else trendingScore = Variables.undefinedFloat;
+
+        if(_msgVolume != null) msgVolume = _msgVolume.asFloat();
+        else msgVolume = Variables.undefinedFloat;
+
+        if(_sentiment != null) sentiment = _sentiment.asFloat();
+        else sentiment = Variables.undefinedFloat;
+
+        if(_followers != null) followers = _followers.asInt();
+        else followers = Variables.undefinedInteger;
+
+        return new Data(ticker, foundCompany, trending, trendingScore, msgVolume, followers, sentiment);
     }
 
     public void run() {
