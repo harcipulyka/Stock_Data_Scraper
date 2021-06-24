@@ -1,16 +1,18 @@
 package com.company;
 
 public class Variables {
-    public static final int THREADCOUNT = 10;
 
-    public static final String PCTICKERS = "C:\\Users\\balazs\\Downloads\\final_tickerlist.txt";
-    public static final String PCDEBUG = "C:\\Users\\balazs\\Downloads\\debug.txt";
-    public static final String PCDATABASE = "C:\\Users\\balazs\\Downloads\\final_database.txt";
+    //this file was made, because I worked on this from my pc, mac and used it on my pi, so I made a file for the file paths
+    //this way you only have to choose the device you are working on once
+
+    public static final String PCTICKERS = "";
+    public static final String PCDEBUG = "";
+    public static final String PCDATABASE = "";
     public static final String PCEXCEL = "";
 
-    public static final String MACTICKERS = "/Users/raczbalazs/Downloads/tickers.txt";
-    public static final String MACDEBUG = "/Users/raczbalazs/Downloads/1002.txt";
-    public final static String MACDATABASE = "/Users/raczbalazs/Downloads/database.txt";
+    public static final String MACTICKERS = "";
+    public static final String MACDEBUG = "";
+    public final static String MACDATABASE = "";
     public final static String MACEXCEL = "";
 
     public final static String PITICKERS = "";

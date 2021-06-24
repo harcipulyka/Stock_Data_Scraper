@@ -14,13 +14,14 @@ public class Main {
     public static Variables var = new Variables(Variables.Version.PC);
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        //this mutes the notifications of the htmlunit library
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.SEVERE);
         long startTime = System.currentTimeMillis();
 
-        pi();
+        //pi();
+        demo();
 
-        System.out.println("There was approximetly " + StocktwitsScraper.numberOfNot + " times, when it run into a problem with creating the JSOn file");
-        System.out.println("Whole proces took " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+        System.out.println("Whole process took " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
     }
 
     //gets the tickers and returns them in a list of strings
@@ -44,7 +45,7 @@ public class Main {
         }
     }
 
-    //helper functions, chops up a list to threadcount number of lists
+    //helper functions, divides up a list to THREADCOUNT number of equal sublists
     private static List<List<String>> chopUpList(List<String> entries) {
         int size = entries.size();
         List<List<String>> partitions = new ArrayList<>();
@@ -65,28 +66,32 @@ public class Main {
     //writes out the data to an existing csv file, if the line count is the same entry list size
     private static void appendGoodFile(List<Data> entries) throws IOException{
         Path database = Path.of(var.getDatabasePath());
-
         List<String> lines = Files.readAllLines(database);
+
         if(lines.size() != entries.size() + 1) {
-            System.out.println("Big OOPSIE, The size of the entries intended to be written out did not match, that of the output files!");
+            System.out.println("The size of the entries intended to be written out did not match, the number of lines in the output file!");
             System.out.println("The entries contained " + entries.size() + " entries, and there were " + lines.size() + " lines in the output file");
             throw new IOException("Program shut down in order to avoid any more unnecessary damage!");
-        } else {
-            for(int i = 0; i < entries.size(); i++) {
-                String newPart = entries.get(i).toCSV();
-                lines.set(i + 1, lines.get(i + 1) + newPart);
-            }
-            //settings the date in the first row
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            String date = "," + dtf.format(now);
-            lines.set(0, lines.get(0) + date);
-            String done = String.join("\r\n", lines);
-            Files.writeString(database, done);
         }
+
+        //adds the data to the existing database
+        for(int i = 0; i < entries.size(); i++) {
+            String newPart = entries.get(i).toCSV();
+            lines.set(i + 1, lines.get(i + 1) + newPart);
+        }
+
+        //adds the current date to the header row
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        String date = "," + dtf.format(now);
+        lines.set(0, lines.get(0) + date);
+        String done = String.join("\r\n", lines);
+
+        //writes out the new version of the database
+        Files.writeString(database, done);
     }
 
-    //this method is maintained and used by the raspberry
+    //this is one way to use the scraper, this was written for daily scraping
     private static void pi() throws InterruptedException, IOException{
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -117,5 +122,34 @@ public class Main {
         appendGoodFile(entries);
         now = LocalDateTime.now();
         System.out.println("Process finished on " + dtf.format(now));
+    }
+
+    //small demo of the finwiz scraper
+    private static void demo() throws InterruptedException {
+        List<String> tickers = new ArrayList<>();
+        tickers.add("AAPL");
+        tickers.add("GME");
+        tickers.add("TSLA");
+
+        StocktwitsScraper s = new StocktwitsScraper(tickers);
+        Finwiz f = new Finwiz(tickers);
+
+        Thread t1 = new Thread(s);
+        Thread t2 = new Thread(f);
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        for (Ticker t : f.tickers) {
+            System.out.println();
+            System.out.println("!!! " + t.data.get("Full Name") + " !!!");
+            System.out.println();
+            t.data.entrySet().stream().forEach(x -> {
+                System.out.println(x.getKey() + " : " + x.getValue());
+            });
+        }
     }
 }
