@@ -4,6 +4,7 @@ This program collects 80 variables about a ticker by scraping Finviz and Stocktw
 It uses htmlunit and minimal-json for scraping the net and parsing the json. I recommend htmlunit version 2.46 because I had problems with the newer version.
 Jar links: [htmlunit version 2.46](https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit/2.46.0 "htmlunit version 2.46") and [minimal-json](https://jar-download.com/artifacts/com.eclipsesource.minimal-json "minimal-json")
 ## Usage
+Check the demo method in Main for a working example.
 ### Finviz
 For scraping finviz data you have to use the `Finviz` constructor, that requires a list of tickers (strings, not case sensitive). Then you have to run it or start it through the thread, after which you can acces the `Finviz.data` which contains a list of `Ticker` objects. Each `Ticker` has a public HashMap which contains all the data scraped from finviz. This includes the 72 variables in the main table and additionaly the industry and the sector of the company.
 ### Stocktwits
